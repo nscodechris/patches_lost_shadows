@@ -1,0 +1,10 @@
+
+pip install --proxy http://serviceproxy.se.shb.biz:8130 pandas
+
+
+to use git behind proxy server...
+
+git config --global http.proxy http://serviceproxy.se.shb.biz:8130
+
+
+1B5A-0DCA
