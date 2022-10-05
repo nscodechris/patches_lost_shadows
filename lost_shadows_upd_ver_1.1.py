@@ -8,7 +8,6 @@ import shutil
 
 
 
-
 CURR_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 class InventoryItemsAdd:
@@ -219,6 +218,7 @@ abreheim = InventoryItems([
             ['silver_dust', 150, 5],
             ['tent', 3000, 5],
         ])
+
 north_cave_shop = InventoryItems([
             ['Items', 'Cost', "Quantity"],
             ['potion', 250, 5],
@@ -236,6 +236,7 @@ north_cave_shop = InventoryItems([
             ['silver_dust', 200, 5],
             ['tent', 4000, 5],
         ],)
+
 
 create_magic = Cast_Magic()
 create_enemy = EnemyName()
@@ -335,7 +336,7 @@ class MakeExcelFiles:
         MakeExcelFiles.delete_org_sheet(self, "\\magic", "\\cast_magic.xlsx")
         MakeExcelFiles.delete_org_sheet(self, "\\weapons_armor", "\\weapons_armor.xlsx")
         MakeExcelFiles.delete_org_sheet(self, "\\level", "\\level_up.xlsx")
-        # version 1.2
+        # version 1.1
         MakeExcelFiles.write_data(self, "North Cave items", "\\inventory_items", "\\item_store.xlsx",
                                   self.df_north_cave_shop)
         MakeExcelFiles.write_data(self, "North Cave items_default", "\\inventory_items", "\\item_store.xlsx",
@@ -360,8 +361,8 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
     if obj.exists():
         df = pd.read_excel(path, sheet_name=sheet_name)
         if new_store_added in df.values:
-            new_vers_txt_edit()
-            print(f"Already up to date!! ver installed: {open_ver_file()}")
+
+            input(f"Already up to date!! ver installed: {open_ver_file()} \nPress enter")
         else:
             book = openpyxl.load_workbook(path)
             if sheet_name in book.sheetnames:
@@ -392,24 +393,28 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
 
 
 def new_vers_txt_edit():
-    lines = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'r').readlines()
+    lines = open(CURR_DIR_PATH + "\\lost_shadow_installed.txt", 'r').readlines()
     lines[1] = "ver 1.1"
-    out = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'w')
+    out = open(CURR_DIR_PATH + "\\lost_shadow_installed.txt", 'w')
     out.writelines(lines)
     out.close()
     input("update complete press enter, new version 1.1")
 
 # add this function to game_ intro version control will be set
 def open_ver_file():
-    file = open(CURR_DIR_PATH + "\\version_ctrl.txt")
+    file = open(CURR_DIR_PATH + "\\lost_shadow_installed.txt")
     content = file.readlines()
-    ver = content[1]
+    try:
+        ver = content[1]
+    except IndexError:
+        ver = "1.0"
     return ver
 
 def write_version():
-    with open(CURR_DIR_PATH + "\\version_ctrl.txt", "a") as f:
-        f.write("ver 1.0\n")
+    with open(CURR_DIR_PATH + "\\lost_shadow_installed.txt", "a") as f:
+        f.write("ver 1.1\n")
         f.close()
+
 
 # write_version()
 # Abreheim's items
