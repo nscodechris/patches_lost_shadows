@@ -326,20 +326,24 @@ def delete_folders_reset():
             continue
 
 
-def check_files(sheet_name, folder_name, file_name):
+def check_files(sheet_name, folder_name, file_name, new_store_added):
     path = (CURR_DIR_PATH + folder_name + file_name)
     obj = Path(path)
     if obj.exists():
-        book = openpyxl.load_workbook(path)
-        if sheet_name in book.sheetnames:
-            make_excel_files_add = MakeExcelFilesAdd()
-            make_excel_files_add.run_main()
+        df = pd.read_excel(path, sheet_name=sheet_name)
+        if new_store_added in df.values:
+            print("")
         else:
-            delete_folders_reset()
-            make_excel_files = MakeExcelFiles()
-            make_excel_files.run_main()
-            make_excel_files_add = MakeExcelFilesAdd()
-            make_excel_files_add.run_main()
+            book = openpyxl.load_workbook(path)
+            if sheet_name in book.sheetnames:
+                make_excel_files_add = MakeExcelFilesAdd()
+                make_excel_files_add.run_main()
+            else:
+                delete_folders_reset()
+                make_excel_files = MakeExcelFiles()
+                make_excel_files.run_main()
+                make_excel_files_add = MakeExcelFilesAdd()
+                make_excel_files_add.run_main()
     else:
         delete_folders_reset()
         make_excel_files = MakeExcelFiles()
@@ -348,13 +352,13 @@ def check_files(sheet_name, folder_name, file_name):
         make_excel_files_add.run_main()
 
 
-# check_files("store_count", "\\inventory_items",  "\\item_store.xlsx")
+check_files("store_count", "\\inventory_items",  "\\item_store.xlsx", "test2")
 
 
-# path = (CURR_DIR_PATH + "\\inventory_items" + "\\item_store.xlsx")
+path = (CURR_DIR_PATH + "\\inventory_items" + "\\item_store.xlsx")
 
-# df = pd.read_excel(path, sheet_name="store_count")
-# print(df)
+df = pd.read_excel(path, sheet_name="store_count")
+print(df)
 
 
 
