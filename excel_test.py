@@ -15,8 +15,8 @@ class InventoryItemsAdd:
     def __init__(self):
 
         self.store_count = [
-            ["test2", 0, 0, ""],
-            ["test3", 0, 0, ""],
+            ["North Cave items", 0, 0, ""],
+
         ]
 
 
@@ -27,7 +27,7 @@ class MakeExcelFilesAdd:
         # create pandas dataframe from lists of class
         self.store_count_add = pd.DataFrame(create_inventory_add.store_count)
 
-    def write_data(self, sheet_name, folder_name, work_book_name, df_name):
+    def write_to_sheet_data(self, sheet_name, folder_name, work_book_name, df_name):
         path = (CURR_DIR_PATH + folder_name + work_book_name)
         # MakeExcelFiles.Remove_password_xlsx(self, path, "five@morning!Mind5")
         wb = load_workbook(path)
@@ -39,29 +39,13 @@ class MakeExcelFilesAdd:
 
     def run_main(self):
 
-        MakeExcelFilesAdd.write_data(self, "store_count", "\\inventory_items", "\\item_store.xlsx",
+        MakeExcelFilesAdd.write_to_sheet_data(self, "store_count", "\\inventory_items", "\\item_store.xlsx",
                                     self.store_count_add)
 
 class InventoryItems:
-    def __init__(self):
-        self.abreheim_shop = [
-            ['Items', 'Cost', "Quantity"],
-            ['potion', 50, 5],
-            ['ether', 1500, 5],
-            ['antidote', 80, 5],
-            ['phoenix_down', 300, 5],
-            ['silver_dust', 150, 5],
-            ['tent', 3000, 5],
-        ]
-        self.abreheim_shop_defaulf = [
-            ['Items', 'Cost', "Quantity"],
-            ['potion', 50, 5],
-            ['ether', 1500, 5],
-            ['antidote', 80, 5],
-            ['phoenix_down', 300, 5],
-            ['silver_dust', 150, 5],
-            ['tent', 3000, 5],
-        ]
+    def __init__(self, items, items_default):
+        self.shop = items
+        self.shop_default = items_default
         self.store_count = [
             ['town', 'start', 'end', 'count'],
             ["Abreheim's items", 0, 0, ""],
@@ -218,7 +202,41 @@ class WeaponsArmor:
             ['silver ring', 0, 7500, 0], ]
 
 
-create_inventory = InventoryItems()
+abreheim = InventoryItems([
+            ['Items', 'Cost', "Quantity"],
+            ['potion', 50, 5],
+            ['ether', 1500, 5],
+            ['antidote', 80, 5],
+            ['phoenix_down', 300, 5],
+            ['silver_dust', 150, 5],
+            ['tent', 3000, 5],
+        ], [
+            ['Items', 'Cost', "Quantity"],
+            ['potion', 50, 5],
+            ['ether', 1500, 5],
+            ['antidote', 80, 5],
+            ['phoenix_down', 300, 5],
+            ['silver_dust', 150, 5],
+            ['tent', 3000, 5],
+        ])
+north_cave_shop = InventoryItems([
+            ['Items', 'Cost', "Quantity"],
+            ['potion', 250, 5],
+            ['ether', 3000, 5],
+            ['antidote', 160, 5],
+            ['phoenix_down', 500, 5],
+            ['silver_dust', 200, 5],
+            ['tent', 4000, 5],
+        ], [
+            ['Items', 'Cost', "Quantity"],
+            ['potion', 250, 5],
+            ['ether', 3000, 5],
+            ['antidote', 160, 5],
+            ['phoenix_down', 500, 5],
+            ['silver_dust', 200, 5],
+            ['tent', 4000, 5],
+        ],)
+
 create_magic = Cast_Magic()
 create_enemy = EnemyName()
 create_enemy_level = LevelEnemy()
@@ -228,10 +246,10 @@ create_weapons_armor = WeaponsArmor()
 class MakeExcelFiles:
     def __init__(self):
         # create pandas dataframe from lists of class
-        self.df_abreheim_shop = pd.DataFrame(create_inventory.abreheim_shop)
-        self.df_abreheim_shop_default = pd.DataFrame(create_inventory.abreheim_shop_defaulf)
-        self.df_abreheim_shop_store_count = pd.DataFrame(create_inventory.store_count)
-        self.df_buy_history = pd.DataFrame(create_inventory.buy_history)
+        self.df_abreheim_shop = pd.DataFrame(abreheim.shop)
+        self.df_abreheim_shop_default = pd.DataFrame(abreheim.shop_default)
+        self.df_abreheim_shop_store_count = pd.DataFrame(abreheim.store_count)
+        self.df_buy_history = pd.DataFrame(abreheim.buy_history)
         self.df_magic = pd.DataFrame(create_magic.magic)
         self.df_magic_gill = pd.DataFrame(create_magic.magic_gil)
         self.df_magic_sell = pd.DataFrame(create_magic.magic_sell)
@@ -240,6 +258,10 @@ class MakeExcelFiles:
         self.df_weapons_power = pd.DataFrame(create_weapons_armor.weapon_powers)
         self.df_weapons_buy = pd.DataFrame(create_weapons_armor.shop_buy)
         self.df_weapons_sell = pd.DataFrame(create_weapons_armor.shop_sell)
+        # new version 1.2 added shops:
+        self.df_north_cave_shop = pd.DataFrame(north_cave_shop.shop)
+        self.df_north_cave_shop_default = pd.DataFrame(north_cave_shop.shop_default)
+
 
     def create_folders(self):
         folders = ["\\enemy", "\\inventory_items", "\\magic", "\\weapons_armor", "\\level"]
@@ -296,6 +318,7 @@ class MakeExcelFiles:
                                     self.df_abreheim_shop)
         MakeExcelFiles.write_data(self, "Abreheim's items_default", "\\inventory_items", "\\item_store.xlsx",
                                     self.df_abreheim_shop_default)
+
         MakeExcelFiles.write_data(self, "store_count", "\\inventory_items", "\\item_store.xlsx",
                                     self.df_abreheim_shop_store_count)
         MakeExcelFiles.write_data(self, "buy_history", "\\inventory_items", "\\item_store.xlsx", self.df_buy_history)
@@ -312,6 +335,11 @@ class MakeExcelFiles:
         MakeExcelFiles.delete_org_sheet(self, "\\magic", "\\cast_magic.xlsx")
         MakeExcelFiles.delete_org_sheet(self, "\\weapons_armor", "\\weapons_armor.xlsx")
         MakeExcelFiles.delete_org_sheet(self, "\\level", "\\level_up.xlsx")
+        # version 1.2
+        MakeExcelFiles.write_data(self, "North Cave items", "\\inventory_items", "\\item_store.xlsx",
+                                  self.df_north_cave_shop)
+        MakeExcelFiles.write_data(self, "North Cave items_default", "\\inventory_items", "\\item_store.xlsx",
+                                  self.df_north_cave_shop_default)
 
 
 def delete_folders_reset():
@@ -332,18 +360,31 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
     if obj.exists():
         df = pd.read_excel(path, sheet_name=sheet_name)
         if new_store_added in df.values:
-            print("")
+            print("Already up to date!!")
         else:
             book = openpyxl.load_workbook(path)
             if sheet_name in book.sheetnames:
                 make_excel_files_add = MakeExcelFilesAdd()
                 make_excel_files_add.run_main()
+                add_stores = MakeExcelFiles()
+                add_stores.write_data("North Cave items", "\\inventory_items", "\\item_store.xlsx",
+                                          add_stores.df_north_cave_shop)
+                add_stores.write_data("North Cave items_default", "\\inventory_items", "\\item_store.xlsx",
+                                          add_stores.df_north_cave_shop_default)
+                lines = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'r').readlines()
+                lines[1] = "ver 1.2"
+                out = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'w')
+                out.writelines(lines)
+                out.close()
+                input("update complete press enter, new version 1.2")
+
             else:
                 delete_folders_reset()
                 make_excel_files = MakeExcelFiles()
                 make_excel_files.run_main()
                 make_excel_files_add = MakeExcelFilesAdd()
                 make_excel_files_add.run_main()
+
     else:
         delete_folders_reset()
         make_excel_files = MakeExcelFiles()
@@ -352,13 +393,25 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
         make_excel_files_add.run_main()
 
 
-check_files("store_count", "\\inventory_items",  "\\item_store.xlsx", "test2")
 
+# add this function to game_ intro version control will be set
+def open_ver_file():
+    file = open(CURR_DIR_PATH + "\\version_ctrl.txt")
+    content = file.readlines()
+    ver = content[1]
+    return ver
+
+# Abreheim's items
+check_files("store_count", "\\inventory_items",  "\\item_store.xlsx", "North Cave items")
 
 path = (CURR_DIR_PATH + "\\inventory_items" + "\\item_store.xlsx")
 
 df = pd.read_excel(path, sheet_name="store_count")
+df2 = pd.read_excel(path, sheet_name="North Cave items")
+
+print(f"welcome to lostshadows {open_ver_file()}")
 print(df)
+print(df2)
 
 
 
