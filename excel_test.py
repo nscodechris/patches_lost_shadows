@@ -360,7 +360,7 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
     if obj.exists():
         df = pd.read_excel(path, sheet_name=sheet_name)
         if new_store_added in df.values:
-            print("Already up to date!!")
+            print(f"Already up to date!! ver installed: {open_ver_file()}")
         else:
             book = openpyxl.load_workbook(path)
             if sheet_name in book.sheetnames:
@@ -371,15 +371,11 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
                                           add_stores.df_north_cave_shop)
                 add_stores.write_data("North Cave items_default", "\\inventory_items", "\\item_store.xlsx",
                                           add_stores.df_north_cave_shop_default)
-                lines = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'r').readlines()
-                lines[1] = "ver 1.2"
-                out = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'w')
-                out.writelines(lines)
-                out.close()
-                input("update complete press enter, new version 1.2")
+                new_vers_txt_edit()
 
             else:
                 delete_folders_reset()
+                new_vers_txt_edit()
                 make_excel_files = MakeExcelFiles()
                 make_excel_files.run_main()
                 make_excel_files_add = MakeExcelFilesAdd()
@@ -387,12 +383,20 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
 
     else:
         delete_folders_reset()
+        new_vers_txt_edit()
         make_excel_files = MakeExcelFiles()
         make_excel_files.run_main()
         make_excel_files_add = MakeExcelFilesAdd()
         make_excel_files_add.run_main()
 
 
+def new_vers_txt_edit():
+    lines = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'r').readlines()
+    lines[1] = "ver 1.2"
+    out = open(CURR_DIR_PATH + "\\version_ctrl.txt", 'w')
+    out.writelines(lines)
+    out.close()
+    input("update complete press enter, new version 1.2")
 
 # add this function to game_ intro version control will be set
 def open_ver_file():
@@ -402,16 +406,16 @@ def open_ver_file():
     return ver
 
 # Abreheim's items
+# North Cave items
 check_files("store_count", "\\inventory_items",  "\\item_store.xlsx", "North Cave items")
 
-path = (CURR_DIR_PATH + "\\inventory_items" + "\\item_store.xlsx")
+# path = (CURR_DIR_PATH + "\\inventory_items" + "\\item_store.xlsx")
+# df = pd.read_excel(path, sheet_name="store_count")
+# df2 = pd.read_excel(path, sheet_name="North Cave items")
 
-df = pd.read_excel(path, sheet_name="store_count")
-df2 = pd.read_excel(path, sheet_name="North Cave items")
-
-print(f"welcome to lostshadows {open_ver_file()}")
-print(df)
-print(df2)
+# print(f"welcome to lostshadows {open_ver_file()}")
+# print(df)
+# print(df2)
 
 
 
