@@ -5,11 +5,60 @@ import openpyxl
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl import load_workbook
 import shutil
+import requests
+from bs4 import BeautifulSoup
+from urllib3 import ProxyManager, make_headers, PoolManager
+import urllib.request
+from urllib.request import urlopen
+import urllib3
+import webbrowser
+def open_ver_file(file_name):
+
+    result = []
+    result2 = []
+    for root, dir, files in os.walk("C:\\"):
+        if file_name in files:
+            result.append(os.path.join(root, file_name))
+            result2.append(root)
+    file_path = result[0]
+    path_root = result2[0]
+    file = open(file_path)
+    content = file.readlines()
+    try:
+        ver = content[1]
+    except IndexError:
+        ver = "ver 1.0"
+    return ver, path_root, file_path
+
+# CURR_DIR_PATH = open_ver_file("lost_shadow_installed.txt")[1]
+
+def download_upg_patch():
+    CURR_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+
+    url2 = "https://raw.githubusercontent.com/nscodechris/Lost_Shadows/main/LostShadows_install.zip"
+    # url = "https://raw.github.com/nscodechris/Lost_Shadows/blob/main/LostShadows_install.zip"
+    url = "https://github.com/nscodechris/Lost_Shadows/blob/main/LostShadows_install.zip"
+    # githubusercontent
+
+
+    http = ProxyManager("http://serviceproxy.se.shb.biz:8130")
+
+    r = http.request("GET", url)
+    html = urlopen(url2)
+    soup2 = BeautifulSoup(html.read(), "html.parser")
+    print(soup2)
+
+    soup = BeautifulSoup(r.data, "html.parser")
+    # print(soup)
 
 
 
-CURR_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-
+    results = soup.find(id="repo-content-pjax-container")
+    # print(results.prettify())
+    filename = url.split("/")[-1]
+    # https://github.com/nscodechris/Lost_Shadows/blob/d8def76e29dd392fa953f7c8efa52c8f1cb9ec37/LostShadows_install.zip
+    # LostShadows_install.zip
+    # https://raw.githubusercontent.com/nscodechris/Lost_Shadows/main/LostShadows_install.zip
 class InventoryItemsAdd:
     def __init__(self):
 
@@ -356,34 +405,22 @@ def delete_folders_reset():
             continue
 
 
-def check_files(sheet_name, folder_name, file_name, new_store_added):
+def check_files(folder_name, file_name):
     path = (CURR_DIR_PATH + folder_name + file_name)
     obj = Path(path)
     if obj.exists():
-        df = pd.read_excel(path, sheet_name=sheet_name)
-        if new_store_added in df.values:
-
-            input(f"Already up to date!! ver installed: {open_ver_file()} \nPress enter")
-        else:
-            book = openpyxl.load_workbook(path)
-            if sheet_name in book.sheetnames:
-                make_excel_files_add = MakeExcelFilesAdd()
-                make_excel_files_add.run_main()
-                add_stores = MakeExcelFiles()
-                add_stores.write_data("North Cave items", "\\inventory_items", "\\item_store.xlsx",
-                                          add_stores.df_north_cave_shop)
-                add_stores.write_data("North Cave items_default", "\\inventory_items", "\\item_store.xlsx",
-                                          add_stores.df_north_cave_shop_default)
-                new_vers_txt_edit()
-
-            else:
-                delete_folders_reset()
-                new_vers_txt_edit()
-                make_excel_files = MakeExcelFiles()
-                make_excel_files.run_main()
-                make_excel_files_add = MakeExcelFilesAdd()
-                make_excel_files_add.run_main()
-
+        if open_ver_file("lost_shadow_installed.txt")[0] == "ver 1.0":
+            make_excel_files_add = MakeExcelFilesAdd()
+            make_excel_files_add.run_main()
+            add_stores = MakeExcelFiles()
+            add_stores.write_data("North Cave items", "\\inventory_items", "\\item_store.xlsx",
+                                  add_stores.df_north_cave_shop)
+            add_stores.write_data("North Cave items_default", "\\inventory_items", "\\item_store.xlsx",
+                                  add_stores.df_north_cave_shop_default)
+            new_vers_txt_edit()
+        # for new version updates!
+        elif open_ver_file("lost_shadow_installed.txt")[0] == "ver 1.1":
+            print()
     else:
         delete_folders_reset()
         new_vers_txt_edit()
@@ -394,7 +431,7 @@ def check_files(sheet_name, folder_name, file_name, new_store_added):
 
 
 def new_vers_txt_edit():
-    lines = open(CURR_DIR_PATH + "\\lost_shadow_installed.txt", 'r').readlines()
+    lines = open(CURR_DIR_PATH + "\\lost_shadow_installed.txt", "r").readlines()
     lines[1] = "ver 1.1"
     out = open(CURR_DIR_PATH + "\\lost_shadow_installed.txt", 'w')
     out.writelines(lines)
@@ -402,26 +439,40 @@ def new_vers_txt_edit():
     input("update complete press enter, new version 1.1")
 
 # add this function to game_ intro version control will be set
-def open_ver_file():
-    file = open(CURR_DIR_PATH + "\\lost_shadow_installed.txt")
+# return, ver == game version installed and path_root == game install folder
+def open_ver_file(file_name):
+
+    result = []
+    result2 = []
+    for root, dir, files in os.walk("C:\\"):
+        if file_name in files:
+            result.append(os.path.join(root, file_name))
+            result2.append(root)
+    file_path = result[0]
+    path_root = result2[0]
+    file = open(file_path)
     content = file.readlines()
     try:
         ver = content[1]
     except IndexError:
-        ver = "1.0"
-    return ver
+        ver = "ver 1.0"
+    return ver, path_root, file_path
 
 def write_version():
     with open(CURR_DIR_PATH + "\\lost_shadow_installed.txt", "a") as f:
         f.write("ver 1.1\n")
         f.close()
 
-
+download_upg_patch()
 # write_version()
 # Abreheim's items
 # North Cave items
-check_files("store_count", "\\inventory_items",  "\\item_store.xlsx", "North Cave items")
+# check_files("store_count", "\\inventory_items")
+# print(open_ver_file("lost_shadow_installed.txt")[0])
+# print(open_ver_file("lost_shadow_installed.txt")[2])
 
+#
+# CURR_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 # path = (CURR_DIR_PATH + "\\inventory_items" + "\\item_store.xlsx")
 # df = pd.read_excel(path, sheet_name="store_count")
 # df2 = pd.read_excel(path, sheet_name="North Cave items")
