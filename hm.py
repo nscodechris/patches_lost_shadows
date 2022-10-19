@@ -14,19 +14,22 @@ page = requests.get(url,
 
 # print(page.text)
 soup = BeautifulSoup(page.text, 'html.parser')
-fake_dict = {"item": [1], "picture": []}
+fake_dict = {"item": [0], "picture": []}
 list_use = []
 i = 0
 # print(soup)
 for item in soup.find_all('img'):
     if item['src'].endswith('png'):
         fake_dict["picture"] = item['src']
+        fake_dict["item"] = i
+        i += 1
         list_use.append(fake_dict.copy())
 
 
 table = pd.DataFrame(list_use)
+table.to_csv('picture.xlsx')
 
-def render_imgs(path: str = None) -> str:
-    return f"""<img src="{path}" width="60" > """
-
-table.to_html("table.html", escape=False, formatters=dict(picture=render_imgs))
+# def render_imgs(path: str = None) -> str:
+#     return f"""<img src="{path}" width="60" > """
+#
+# table.to_html("table.html", escape=False, formatters=dict(picture=render_imgs))
