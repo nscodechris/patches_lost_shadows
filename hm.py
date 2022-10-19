@@ -27,7 +27,7 @@ for item in soup.find_all('img'):
 
 
 table = pd.DataFrame(list_use)
-table.to_csv('picture.xlsx')
+table.to_csv('picture.csv', index=False)
 
 # def render_imgs(path: str = None) -> str:
 #     return f"""<img src="{path}" width="60" > """
